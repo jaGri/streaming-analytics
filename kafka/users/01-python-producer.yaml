@@ -1,0 +1,24 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: python-producer
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: "iot"
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      - resource:
+          type: topic
+          name: raw-sensor-data
+        operation: Write
+      - resource:
+          type: topic
+          name: raw-sensor-data
+        operation: Read
+  quotas:
+    producerByteRate: 2097152  # 2MB/s
+    consumerByteRate: 2097152  # 2MB/s

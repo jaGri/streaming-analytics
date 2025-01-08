@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sensor-backend-config
+  namespace: sensor-backend
+data:
+  KAFKA_BOOTSTRAP_SERVERS: "iot-kafka-brokers.kafka.svc.cluster.local:9092"

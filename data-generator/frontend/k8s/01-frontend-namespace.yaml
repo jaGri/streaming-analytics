@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sensor-frontend
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sensor-frontend
+  namespace: sensor-frontend

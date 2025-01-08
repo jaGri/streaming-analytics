@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flink-jobmanager
+  labels:
+    app: flink
+    component: jobmanager
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9249"
+spec:
+  type: NodePort  # Makes the UI accessible from outside
+  ports:
+  - name: rpc
+    port: 6123
+  - name: ui
+    port: 8081
+    nodePort: 30081  # Expose UI on fixed port
+  - name: metrics
+    port: 9249
+  selector:
+    app: flink
+    component: jobmanager

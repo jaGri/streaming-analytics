@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: system-dashboard
+  namespace: system-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: system-dashboard
+  template:
+    metadata:
+      labels:
+        app: system-dashboard
+    spec:
+      containers:
+      - name: system-dashboard
+        image: localhost:5000/system-dashboard:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
