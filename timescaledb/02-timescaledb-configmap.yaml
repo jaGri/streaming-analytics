@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: timescaledb-config
+  namespace: timeseriesdb
+data:
+  POSTGRES_DB: "sensordata"
+  POSTGRES_USER: "tsdbadmin"
+  postgresql.conf: |
+    shared_buffers = '128MB'          # Reduced for low memory usage
+    max_connections = 100
+    effective_cache_size = '384MB'     # Reduced for low memory usage
+    maintenance_work_mem = '64MB'      # Reduced for low memory usage
+    timescaledb.max_background_workers = 4
+    random_page_cost = 1.1
+    effective_io_concurrency = 200

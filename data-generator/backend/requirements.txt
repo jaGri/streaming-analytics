@@ -1,0 +1,7 @@
+# data-sources/sensor-generator/requirements.txt
+fastapi==0.68.1
+uvicorn==0.15.0
+kafka-python==2.0.2
+numpy==1.24.3
+pydantic==1.10.8
+websockets==10.0

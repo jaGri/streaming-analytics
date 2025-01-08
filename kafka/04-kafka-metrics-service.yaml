@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-metrics
+  namespace: kafka
+  labels:
+    app.kubernetes.io/name: kafka
+    strimzi.io/kind: Kafka
+    app: strimzi
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9404"
+spec:
+  ports:
+  - name: metrics
+    port: 9404
+    targetPort: tcp-prometheus
+    protocol: TCP
+  selector:
+    strimzi.io/cluster: iot
+    strimzi.io/kind: Kafka
+    strimzi.io/name: iot-kafka
+  type: ClusterIP

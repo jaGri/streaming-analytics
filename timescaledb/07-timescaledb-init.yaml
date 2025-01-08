@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: timescaledb-init
+  namespace: timeseriesdb
+spec:
+  template:
+    spec:
+      containers:
+      - name: init-db
+        image: timescale/timescaledb:latest-pg14
+        command: 
+        - /bin/sh
+        - -c
+        - |
+          PGPASSWORD=$POSTGRES_PASSWORD psql -h timescaledb -U $POSTGRES_USER -d $POSTGRES_DB -c "
+          CREATE TABLE IF NOT EXISTS sensor_data (
+            time        TIMESTAMPTZ NOT NULL,
+            sensor_id   TEXT NOT NULL,
+            temperature DOUBLE PRECISION,
+            vibration  DOUBLE PRECISION,
+            pressure   DOUBLE PRECISION,
+            operational_state TEXT,
+            maintenance_needed BOOLEAN DEFAULT FALSE,
+            is_test BOOLEAN DEFAULT FALSE
+          );
+          SELECT create_hypertable('sensor_data', 'time', if_not_exists => TRUE);
+          CREATE INDEX IF NOT EXISTS idx_sensor_time ON sensor_data (sensor_id, time DESC);
+          CREATE INDEX IF NOT EXISTS idx_test_data ON sensor_data (is_test, time DESC);
+          CREATE OR REPLACE VIEW production_sensor_data AS SELECT * FROM sensor_data WHERE NOT is_test;
+          "
+        envFrom:
+        - configMapRef:
+            name: timescaledb-config
+        - secretRef:
+            name: timescaledb-secret
+      restartPolicy: OnFailure

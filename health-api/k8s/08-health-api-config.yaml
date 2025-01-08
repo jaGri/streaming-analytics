@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: health-api-config
+  namespace: health-api
+data:
+  DB_HOST: "timescaledb.timeseriesdb"
+  DB_PORT: "5432"
+  DB_NAME: "sensordata"
+  DB_USER: "tsdbadmin"

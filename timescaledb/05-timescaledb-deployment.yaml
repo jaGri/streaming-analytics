@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: timescaledb
+  namespace: timeseriesdb
+spec:
+  serviceName: timescaledb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: timescaledb
+  template:
+    metadata:
+      labels:
+        app: timescaledb
+    spec:
+      containers:
+      - name: timescaledb
+        image: timescale/timescaledb:latest-pg14
+        ports:
+        - containerPort: 5432
+        envFrom:
+        - configMapRef:
+            name: timescaledb-config
+        - secretRef:
+            name: timescaledb-secret
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: timescaledb-data
+          mountPath: /var/lib/postgresql/data
+        - name: config-volume
+          mountPath: /etc/postgresql/postgresql.conf
+          subPath: postgresql.conf
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - tsdbadmin
+          initialDelaySeconds: 20
+          periodSeconds: 10
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - tsdbadmin
+          initialDelaySeconds: 30
+          periodSeconds: 20
+      volumes:
+      - name: timescaledb-data
+        persistentVolumeClaim:
+          claimName: timescaledb-data
+      - name: config-volume
+        configMap:
+          name: timescaledb-config

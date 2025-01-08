@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sensor-backend
+  namespace: sensor-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sensor-backend
+  template:
+    metadata:
+      labels:
+        app: sensor-backend
+    spec:
+      containers:
+      - name: sensor-backend
+        image: localhost:5000/sensor-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: sensor-backend-config
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
