@@ -1,0 +1,12 @@
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkSessionJob
+metadata:
+  name: sensor-processing-job
+  namespace: flink
+spec:
+  deploymentName: sensor-processing-cluster
+  job:
+    jarURI: local:///opt/flink/jobs/sensor-processing.py
+    parallelism: 4
+    upgradeMode: stateless
+    state: running

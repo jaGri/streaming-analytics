@@ -1,0 +1,30 @@
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkDeployment
+metadata:
+  name: sensor-processing-cluster
+  namespace: flink
+spec:
+  image: localhost:5000/flink-python:latest
+  flinkVersion: v1.17
+  flinkConfiguration:
+    taskmanager.numberOfTaskSlots: "4"
+    parallelism.default: "4"
+    state.backend: rocksdb
+    state.checkpoints.dir: file:///flink-data/checkpoints
+    state.savepoints.dir: file:///flink-data/savepoints
+    high-availability.type: kubernetes
+    high-availability.storageDir: file:///flink-data/ha
+    metrics.reporters: prom
+    metrics.reporter.prom.class: org.apache.flink.metrics.prometheus.PrometheusReporter
+    metrics.reporter.prom.port: "9249"
+  serviceAccount: flink-operator
+  jobManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+    replicas: 1
+  taskManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+    replicas: 2
